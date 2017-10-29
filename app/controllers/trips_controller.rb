@@ -4,6 +4,7 @@ require 'json'
 class TripsController < ApplicationController
 
 	def index
-		json_response('test')
+		trip = Trip.new()
+		json_response(trip.transport_mode)
 	end
 end

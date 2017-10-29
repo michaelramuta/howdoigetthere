@@ -10,27 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170812053648) do
+ActiveRecord::Schema.define(version: 20171029162248) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "rides", force: :cascade do |t|
-    t.integer "station_1_id"
-    t.integer "station_2_id"
-    t.float "distance"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "stations", force: :cascade do |t|
-    t.float "lat"
-    t.float "lon"
-    t.integer "station_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "name"
-    t.index ["station_id"], name: "index_stations_on_station_id", unique: true
+  create_table "trips", force: :cascade do |t|
   end
 
 end

@@ -3,16 +3,17 @@ class Trip < ApplicationRecord
 
 	def initialize(params={})
 		start_lat = params.fetch(:start_lat, nil)
-	    start_lon = params.fetch(:start_lon, nil)
-	    end_lat = params.fetch(:end_lat, nil)
-	    end_lon = params.fetch(:end_lon, nil)
-	    @transports = { cta: 1, rideshare: 1, walking: 1, bike: 1}
-	    @stats = { temp: nil, distance: nil, time: nil, trip_time: nil, price: nil, rain: nil}
+    start_lon = params.fetch(:start_lon, nil)
+    end_lat = params.fetch(:end_lat, nil)
+    end_lon = params.fetch(:end_lon, nil)
+    @transports = { cta: 1, rideshare: 1, walking: 1, bike: 1}
+    @stats = { temp: nil, distance: nil, time: nil, trip_time: nil, price: nil, rain: nil, start_lat: start_lat, start_lon: start_lon, end_lat: end_lat, end_lon: end_lon}
 	end
 
 	def add_modifiers
 		time_modifier
 		temp_modifier
+		distance_modifier
 	end
 
 	def transport_mode
@@ -53,5 +54,27 @@ class Trip < ApplicationRecord
 	end
 
 	def temp_modifier
+		tempService = TempService.new(@stats)
+		@stats[:temp] = tempService.temp
+		@stats[:rain] = tempService.rain
+		
+		# TODO: add 'correct' numbers
+		if @stats[:rain] > 0.05
+			modify_stat(:walking, 0.1)
+			modify_stat(:rideshare, 1.6)
+		end
+
+		# TODO: add 'correct' numbers
+		if @stats[:temp] > 80
+			modify_stat(:walking, 1.3)
+		elsif @stats[:temp].between?(30, 80)
+			modify_stat(:walking, 1)
+		elsif @stats[:temp] < 30
+			modify_stat(:walking, 0.2)
+		end
+	end
+
+	def distance_modifier
+		distanceService = DistanceService.new(@stats)
 	end
 end
